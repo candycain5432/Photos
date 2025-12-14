@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Gallery - Photography Portfolio</title>
+    <link rel="icon" href="https://i.postimg.cc/LsdCgV5K/151270872.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #e8e8e8;
+            --accent: #f4f4f4;
+            --dim: #666666;
+            --highlight: #d4a574;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Custom Cursor */
+        #cursor {
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--highlight);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease;
+            mix-blend-mode: difference;
+        }
+
+        #cursor.hover {
+            transform: scale(3);
+            background: rgba(212, 165, 116, 0.1);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(10,10,10,0.98) 0%, rgba(10,10,10,0) 100%);
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 300;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--highlight);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--highlight);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            padding: 12rem 4rem 4rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--dim);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        /* Filter Buttons */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0 5rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .filter-btn {
+            padding: 0.75rem 2rem;
+            background: transparent;
+            border: 1px solid var(--dim);
+            color: var(--text);
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--highlight);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            border-color: var(--highlight);
+            color: var(--bg);
+        }
+
+        .filter-btn:hover::before,
+        .filter-btn.active::before {
+            left: 0;
+        }
+
+        /* Gallery */
+        .full-gallery {
+            padding: 0 4rem 8rem;
+            max-width: 2000px;
+            margin: 0 auto;
+        }
+
+        .gallery-masonry {
+            column-count: 3;
+            column-gap: 2rem;
+        }
+
+        .gallery-item {
+            break-inside: avoid;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInItem 0.6s ease forwards;
+        }
+
+        @keyframes fadeInItem {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.15s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.25s; }
+        .gallery-item:nth-child(5) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(6) { animation-delay: 0.35s; }
+        .gallery-item:nth-child(7) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(8) { animation-delay: 0.45s; }
+        .gallery-item:nth-child(9) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(10) { animation-delay: 0.55s; }
+        .gallery-item:nth-child(11) { animation-delay: 0.6s; }
+        .gallery-item:nth-child(12) { animation-delay: 0.65s; }
+
+        .gallery-item.hidden {
+            display: none;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.6s ease, filter 0.6s ease;
+            cursor: pointer;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.03);
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.8));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .gallery-item:hover::after {
+            opacity: 1;
+        }
+
+        .item-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
+            z-index: 2;
+        }
+
+        .gallery-item:hover .item-info {
+            transform: translateY(0);
+        }
+
+        .item-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .item-meta {
+            font-size: 0.85rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .item-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--highlight);
+            color: var(--bg);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        /* Lightbox */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90vh;
+            position: relative;
+            animation: scaleIn 0.4s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            display: block;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: transparent;
+            border: 2px solid white;
+            border-radius: 50%;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10001;
+        }
+
+        .lightbox-close:hover {
+            background: white;
+            color: var(--bg);
+            transform: rotate(90deg);
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid white;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox-nav:hover {
+            background: white;
+            color: var(--bg);
+        }
+
+        .lightbox-prev {
+            left: 2rem;
+        }
+
+        .lightbox-next {
+            right: 2rem;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: var(--dim);
+            font-size: 1.1rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Footer */
+        footer {
+            padding: 4rem;
+            text-align: center;
+            border-top: 1px solid #1a1a1a;
+            color: var(--dim);
+            font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 1024px) {
+            .gallery-masonry {
+                column-count: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem 2rem;
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+                font-size: 0.85rem;
+            }
+
+            .page-header {
+                padding: 10rem 2rem 3rem;
+            }
+
+            .gallery-masonry {
+                column-count: 1;
+                column-gap: 0;
+            }
+
+            .full-gallery {
+                padding: 0 2rem 4rem;
+            }
+
+            .filter-container {
+                gap: 1rem;
+                padding: 0 2rem;
+            }
+
+            .filter-btn {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.8rem;
+            }
+
+            #cursor {
+                display: none;
+            }
+
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .lightbox-prev {
+                left: 1rem;
+            }
+
+            .lightbox-next {
+                right: 1rem;
+            }
+
+            .lightbox-close {
+                top: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="cursor"></div>
+
+    <nav>
+        <div class="logo">WILLIAM CAIN</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+            <li><a href="index.html#about">About</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <header class="page-header">
+        <h1 class="page-title">Complete<br>Collection</h1>
+        <p class="page-subtitle">A Visual Journey Through Time & Space</p>
+    </header>
+
+    <div class="filter-container">
+        <button class="filter-btn active" data-category="all">All Work</button>
+        <button class="filter-btn" data-category="landscape">Landscape</button>
+        <button class="filter-btn" data-category="urban">Urban</button>
+        <button class="filter-btn" data-category="portrait">Portrait</button>
+        <button class="filter-btn" data-category="nature">Nature</button>
+        <button class="filter-btn" data-category="architecture">Architecture</button>
+        <button class="filter-btn" data-category="life">Life</button>
+    </div>
+
+    <section id="gallery" class="full-gallery">
+        <div class="gallery-masonry">
+            <!-- Landscape Photos -->
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/bYTC58BM/IMG-3033.jpg" alt="Mountain Vista">
+                <div class="item-info">
+                    <div class="item-title">Troll #1</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="portrait">
+                <img src="https://i.postimg.cc/qMvbVYPj/IMG-3053.jpg" alt="City Lights">
+                <div class="item-info">
+                    <div class="item-title">Carter</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Portrait</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/bYHWj1sZ/IMG-3059.jpg" alt="Forest Dreams">
+                <div class="item-info">
+                    <div class="item-title">Troll #2</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/sDTLMyPC/IMG-3098.jpg" alt="Alpine Glow">
+                <div class="item-info">
+                    <div class="item-title">Troll #3</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/28kJj3Wz/IMG-3103.jpg" alt="Modern Lines">
+                <div class="item-info">
+                    <div class="item-title">Troll #4</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="urban">
+                <img src="https://i.postimg.cc/vH0K4M7d/IMG-3307.jpg" alt="Urban Geometry">
+                <div class="item-info">
+                    <div class="item-title">NC Skyline</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Urban</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="life">
+                <img src="https://i.postimg.cc/RCLVhPP4/LRM-20250814-161150.jpg" alt="Coastal Serenity">
+                <div class="item-info">
+                    <div class="item-title">Roasry B&W</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Life</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="life">
+                <img src="https://i.postimg.cc/rFyyrSbZ/LRM-20250815-111905.jpg" alt="Wilderness Path">
+                <div class="item-info">
+                    <div class="item-title">Oldie Camera</div>
+                    <div class="item-meta">NC · 2023</div>
+                    <span class="item-category">Life</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="life">
+                <img src="https://i.postimg.cc/6566vdSg/LRM-20250820-150221.jpg" alt="Golden Hour">
+                <div class="item-info">
+                    <div class="item-title">Rear View</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Life</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="life">
+                <img src="https://i.postimg.cc/L6441z70/LRM-20250820-152057.jpg" alt="Concrete Dreams">
+                <div class="item-info">
+                    <div class="item-title">American Dreams</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Life</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="landscape">
+                <img src="https://i.postimg.cc/jSZMjrf7/20240608-203223-ecaa.jpg" alt="Desert Solitude">
+                <div class="item-info">
+                    <div class="item-title">Bridge Sunset</div>
+                    <div class="item-meta">Surf City NC · 2024</div>
+                    <span class="item-category">Landscape</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/52nstMzL/20240617-125547-3ab4.jpg" alt="Night Wanderer">
+                <div class="item-info">
+                    <div class="item-title">Purple Hydrangea</div>
+                    <div class="item-meta">NC · 2024</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="life">
+                <img src="https://i.postimg.cc/bw3mvjn1/20241101-173536-7a80.jpg" alt="Misty Morning">
+                <div class="item-info">
+                    <div class="item-title">The Queen's Death</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Life</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="life">
+                <img src="https://i.postimg.cc/bw3mvjnx/20241210-163825-d726.jpg" alt="Natural Light">
+                <div class="item-info">
+                    <div class="item-title">Candy Cane</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Life</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="urban">
+                <img src="https://i.postimg.cc/0yYqXjLj/20240916-153226.jpg" alt="Vertical City">
+                <div class="item-info">
+                    <div class="item-title">Nate Custer</div>
+                    <div class="item-meta">Wake Prep NC · 2025</div>
+                    <span class="item-category">Urban</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="urban">
+                <img src="https://i.postimg.cc/ZqJzGZSp/IMG-0424.jpg" alt="Sunset Ridge">
+                <div class="item-info">
+                    <div class="item-title">Train Tracks</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Urban</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/MpqjFMvY/20240704-183547-a7f5.jpg" alt="Street Stories">
+                <div class="item-info">
+                    <div class="item-title">Squirrel</div>
+                    <div class="item-meta">Florida · 2024</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="urban">
+                <img src="https://i.postimg.cc/g2m6TXxW/20250226-191242.jpg" alt="Mountain Lake">
+                <div class="item-info">
+                    <div class="item-title">Basketball Sunset</div>
+                    <div class="item-meta">NC · 2024</div>
+                    <span class="item-category">Urban</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/XYLySj50/IMG-1016.jpg" alt="Urban Portrait">
+                <div class="item-info">
+                    <div class="item-title">Pink Flower</div>
+                    <div class="item-meta">Camp Lejeune NC · 2025</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://i.postimg.cc/Cx7fTh8S/IMG-1065.jpg" alt="Sacred Spaces">
+                <div class="item-info">
+                    <div class="item-title">Fallen Soldiers</div>
+                    <div class="item-meta">Montford Point Marine Memorial NC · 2025</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="urban">
+                <img src="https://i.postimg.cc/3rPKRsh1/IMG-3166.jpg" alt="Canyon Light">
+                <div class="item-info">
+                    <div class="item-title">Old Silos</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Urban</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="urban">
+                <img src="https://i.postimg.cc/gk8G6gcN/IMG-3196.jpg" alt="Metro Life">
+                <div class="item-info">
+                    <div class="item-title">Old Recycling site</div>
+                    <div class="item-meta">NC · 2025</div>
+                    <span class="item-category">Urban</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="nature">
+                <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=800&fit=crop" alt="Ocean Dreams">
+                <div class="item-info">
+                    <div class="item-title">Ocean Dreams</div>
+                    <div class="item-meta">Maldives · 2023</div>
+                    <span class="item-category">Nature</span>
+                </div>
+            </div>
+
+            <div class="gallery-item" data-category="portrait">
+                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&fit=crop" alt="Character Study">
+                <div class="item-info">
+                    <div class="item-title">Character Study</div>
+                    <div class="item-meta">LA · 2025</div>
+                    <span class="item-category">Portrait</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="closeLightbox">×</button>
+        <button class="lightbox-nav lightbox-prev" id="prevImage">‹</button>
+        <button class="lightbox-nav lightbox-next" id="nextImage">›</button>
+        <div class="lightbox-content">
+            <img src="" alt="" id="lightboxImage">
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 William Cain. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Custom cursor
+        const cursor = document.getElementById('cursor');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effects
+        const interactiveElements = document.querySelectorAll('a, button, .gallery-item img');
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const galleryItems = document.querySelectorAll('.gallery-item');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const category = btn.dataset.category;
+                
+                // Update active button
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Filter items
+                galleryItems.forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+        // Lightbox functionality
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const closeLightbox = document.getElementById('closeLightbox');
+        const prevImage = document.getElementById('prevImage');
+        const nextImage = document.getElementById('nextImage');
+        let currentImageIndex = 0;
+        let visibleImages = [];
+
+        function updateVisibleImages() {
+            visibleImages = Array.from(document.querySelectorAll('.gallery-item:not(.hidden) img'));
+        }
+
+        function openLightbox(index) {
+            updateVisibleImages();
+            currentImageIndex = index;
+            lightboxImage.src = visibleImages[currentImageIndex].src;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightboxFunc() {
+            lightbox.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showPrevImage() {
+            currentImageIndex = (currentImageIndex - 1 + visibleImages.length) % visibleImages.length;
+            lightboxImage.src = visibleImages[currentImageIndex].src;
+        }
+
+        function showNextImage() {
+            currentImageIndex = (currentImageIndex + 1) % visibleImages.length;
+            lightboxImage.src = visibleImages[currentImageIndex].src;
+        }
+
+        // Event listeners for gallery images
+        galleryItems.forEach((item, index) => {
+            const img = item.querySelector('img');
+            img.addEventListener('click', () => {
+                updateVisibleImages();
+                const imgIndex = visibleImages.indexOf(img);
+                if (imgIndex !== -1) {
+                    openLightbox(imgIndex);
+                }
+            });
+        });
+
+        // Lightbox controls
+        closeLightbox.addEventListener('click', closeLightboxFunc);
+        prevImage.addEventListener('click', showPrevImage);
+        nextImage.addEventListener('click', showNextImage);
+
+        // Close on background click
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightboxFunc();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            
+            if (e.key === 'Escape') closeLightboxFunc();
+            if (e.key === 'ArrowLeft') showPrevImage();
+            if (e.key === 'ArrowRight') showNextImage();
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
