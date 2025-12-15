@@ -391,6 +391,17 @@
             font-weight: 400;
         }
 
+        /* No scrollbar for about text */
+        .no-scrollbar {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;     /* Firefox */
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+        display: none;             /* Chrome, Safari, Opera */
+        }
+
+
         /* Contact Section */
         .contact {
             padding: 8rem 4rem;
