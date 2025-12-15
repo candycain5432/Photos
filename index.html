@@ -31,26 +31,34 @@
             cursor: default;
         }
 
-        /* Custom Cursor */
-        body * {
-            cursor: none;
+        /* Custom Cursor - Desktop Only */
+        @media (min-width: 769px) {
+            body * {
+                cursor: none;
+            }
+
+            #cursor {
+                width: 12px;
+                height: 12px;
+                border: 2px solid var(--highlight);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                transition: transform 0.15s ease, opacity 0.15s ease;
+                mix-blend-mode: difference;
+            }
+
+            #cursor.hover {
+                transform: scale(3);
+                background: rgba(212, 165, 116, 0.1);
+            }
         }
 
-        #cursor {
-            width: 12px;
-            height: 12px;
-            border: 2px solid var(--highlight);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.15s ease, opacity 0.15s ease;
-            mix-blend-mode: difference;
-        }
-
-        #cursor.hover {
-            transform: scale(3);
-            background: rgba(212, 165, 116, 0.1);
+        @media (max-width: 768px) {
+            #cursor {
+                display: none !important;
+            }
         }
 
         /* Navigation */
@@ -77,6 +85,7 @@
             font-size: 1.5rem;
             font-weight: 900;
             letter-spacing: -0.02em;
+            z-index: 1001;
         }
 
         .nav-links {
@@ -113,6 +122,34 @@
 
         .nav-links a:hover::after {
             width: 100%;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1001;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 2px;
+            background: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
         }
 
         /* Hero Section */
@@ -393,14 +430,13 @@
 
         /* No scrollbar for about text */
         .no-scrollbar {
-        -ms-overflow-style: none;  /* IE and Edge */
-        scrollbar-width: none;     /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;     /* Firefox */
         }
 
         .no-scrollbar::-webkit-scrollbar {
-        display: none;             /* Chrome, Safari, Opera */
+            display: none;             /* Chrome, Safari, Opera */
         }
-
 
         /* Contact Section */
         .contact {
@@ -421,6 +457,7 @@
             gap: 3rem;
             justify-content: center;
             margin-top: 3rem;
+            flex-wrap: wrap;
         }
 
         .contact-link {
@@ -455,15 +492,65 @@
         @media (max-width: 768px) {
             nav {
                 padding: 1.5rem 2rem;
+                background: rgba(10,10,10,0.98);
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .hamburger {
+                display: flex;
             }
 
             .nav-links {
-                gap: 1.5rem;
-                font-size: 0.85rem;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background: rgba(10,10,10,0.98);
+                flex-direction: column;
+                padding: 6rem 2rem 2rem;
+                gap: 2rem;
+                transition: right 0.3s ease;
+                backdrop-filter: blur(10px);
+                border-left: 1px solid #1a1a1a;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.1rem;
+                padding: 0.5rem 0;
+            }
+
+            .hero {
+                height: 100svh;
+            }
+
+            .hero-title {
+                font-size: clamp(3rem, 15vw, 5rem);
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                letter-spacing: 0.15em;
+            }
+
+            .scroll-indicator {
+                bottom: 2rem;
             }
 
             .gallery {
                 padding: 4rem 2rem;
+            }
+
+            .section-subtitle {
+                margin-bottom: 3rem;
             }
 
             .gallery-grid {
@@ -475,18 +562,113 @@
                 grid-column: span 1 !important;
             }
 
+            .gallery-item img {
+                aspect-ratio: 4/5;
+            }
+
+            .gallery-caption {
+                padding: 1.5rem;
+            }
+
+            .caption-title {
+                font-size: 1.2rem;
+            }
+
+            .caption-meta {
+                font-size: 0.8rem;
+            }
+
+            .about {
+                padding: 4rem 2rem;
+            }
+
             .about-content {
                 grid-template-columns: 1fr;
                 gap: 3rem;
             }
 
+            .about-image {
+                order: 1;
+            }
+
+            .about-image img {
+                height: 400px;
+            }
+
+            .about-image::before {
+                top: -10px;
+                left: -10px;
+                right: 10px;
+                bottom: 10px;
+            }
+
+            .about-text {
+                order: 2;
+            }
+
+            .about-text p {
+                font-size: 1rem;
+            }
+
+            .contact {
+                padding: 4rem 2rem;
+            }
+
             .contact-links {
                 flex-direction: column;
                 align-items: center;
+                gap: 1.5rem;
             }
 
-            #cursor {
-                display: none;
+            .contact-link {
+                width: 80%;
+                max-width: 300px;
+            }
+
+            footer {
+                padding: 3rem 2rem;
+            }
+
+            /* Mobile touch improvements */
+            .gallery-item::after {
+                opacity: 0;
+            }
+
+            .gallery-caption {
+                transform: translateY(0);
+                background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.9) 40%);
+                padding: 4rem 1.5rem 1.5rem;
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            nav {
+                padding: 1.5rem 3rem;
+            }
+
+            .nav-links {
+                gap: 2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .gallery {
+                padding: 6rem 3rem;
+            }
+
+            .about {
+                padding: 6rem 3rem;
+            }
+
+            .about-content {
+                gap: 4rem;
+            }
+
+            .contact {
+                padding: 6rem 3rem;
             }
         }
     </style>
@@ -496,6 +678,11 @@
 
     <nav>
         <div class="logo">WILLIAM CAIN</div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
         <ul class="nav-links">
             <li><a href="#work">Work</a></li>
             <li><a href="Allphotos.html">Gallery</a></li>
@@ -570,14 +757,15 @@
             </div>
             <div class="about-text">
                 <h2>About the Artist</h2>
-                <p><span class="highlight"><p>I'm a young photographer who loves capturing the quiet moments that most people don’t always notice. My work explores how natural light, real emotion, and the beauty in everyday places come together to tell a story.</p>
+                <p><span class="highlight">I'm a young photographer who loves capturing the quiet moments that most people don't always notice. My work explores how natural light, real emotion, and the beauty in everyday places come together to tell a story.</span></p>
 
-<p>Even though I’m still a sophomore in high school, I’ve spent years practicing and growing my skills. I’ve had the chance to work with people who appreciate honest, meaningful photos, and I’m always excited to learn more. My approach is simple: <span class="highlight">find the extraordinary in the ordinary.</span></p>
+                <p>Even though I'm still a sophomore in high school, I've spent years practicing and growing my skills. I've had the chance to work with people who appreciate honest, meaningful photos, and I'm always excited to learn more. My approach is simple: <span class="highlight">find the extraordinary in the ordinary.</span></p>
 
-<p>Each photograph I take is an invitation to pause, look a little closer, and see the world from a different perspective — even if it’s just for a moment.</p>
-                    <p>I plan a career in aviation keeping photography as a hobby. I plan to take photos of the diffrent citys and countries i visit focusing on urban photoagraphy. My other intrestes include Programming (mostly vibe coding), Mountian Bicking (I race for NC NICA), Eletrical Engineering and video games (Apex legends, Rocket League, and some War Thunder). </p>
-                    <p>My favorite saying is "Memento mori" (remember that you must die) This reminds us that death is a part of life and to enjoy the world you live in while you can. </p>
-
+                <p>Each photograph I take is an invitation to pause, look a little closer, and see the world from a different perspective — even if it's just for a moment.</p>
+                
+                <p>I plan a career in aviation keeping photography as a hobby. I plan to take photos of the different cities and countries I visit focusing on urban photography. My other interests include Programming (mostly vibe coding), Mountain Biking (I race for NC NICA), Electrical Engineering and video games (Apex Legends, Rocket League, and some War Thunder).</p>
+                
+                <p>My favorite saying is "Memento mori" (remember that you must die). This reminds us that death is a part of life and to enjoy the world you live in while you can.</p>
             </div>
         </div>
     </section>
@@ -595,37 +783,65 @@
     </footer>
 
     <script>
-        // Custom cursor
+        // Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const navLinksItems = document.querySelectorAll('.nav-links a');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        navLinksItems.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Custom cursor - desktop only
         const cursor = document.getElementById('cursor');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
+        if (window.innerWidth > 768) {
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
 
-        function animateCursor() {
-            cursorX += (mouseX - cursorX) * 0.15;
-            cursorY += (mouseY - cursorY) * 0.15;
-            
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            
-            requestAnimationFrame(animateCursor);
+            function animateCursor() {
+                cursorX += (mouseX - cursorX) * 0.15;
+                cursorY += (mouseY - cursorY) * 0.15;
+                
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover effect on interactive elements
+            const interactiveElements = document.querySelectorAll('a, .gallery-item');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.classList.add('hover');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('hover');
+                });
+            });
         }
-        animateCursor();
-
-        // Hover effect on interactive elements
-        const interactiveElements = document.querySelectorAll('a, .gallery-item');
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.classList.add('hover');
-            });
-            el.addEventListener('mouseleave', () => {
-                cursor.classList.remove('hover');
-            });
-        });
 
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -641,16 +857,17 @@
             });
         });
 
-        // Parallax effect on scroll
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const heroContent = document.querySelector('.hero-content');
-            if (heroContent) {
-                heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
-                heroContent.style.opacity = 1 - (scrolled / 800);
-            }
-        });
+        // Parallax effect on scroll - desktop only
+        if (window.innerWidth > 768) {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const heroContent = document.querySelector('.hero-content');
+                if (heroContent) {
+                    heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
+                    heroContent.style.opacity = 1 - (scrolled / 800);
+                }
+            });
+        }
     </script>
 </body>
 </html>
-
