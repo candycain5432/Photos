@@ -30,22 +30,34 @@
             overflow-x: hidden;
         }
 
-        /* Custom Cursor */
-        #cursor {
-            width: 12px;
-            height: 12px;
-            border: 2px solid var(--highlight);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.15s ease;
-            mix-blend-mode: difference;
+        /* Custom Cursor - Desktop Only */
+        @media (min-width: 769px) {
+            body * {
+                cursor: none;
+            }
+
+            #cursor {
+                width: 12px;
+                height: 12px;
+                border: 2px solid var(--highlight);
+                border-radius: 50%;
+                position: fixed;
+                pointer-events: none;
+                z-index: 9999;
+                transition: transform 0.15s ease;
+                mix-blend-mode: difference;
+            }
+
+            #cursor.hover {
+                transform: scale(3);
+                background: rgba(212, 165, 116, 0.1);
+            }
         }
 
-        #cursor.hover {
-            transform: scale(3);
-            background: rgba(212, 165, 116, 0.1);
+        @media (max-width: 768px) {
+            #cursor {
+                display: none !important;
+            }
         }
 
         /* Navigation */
@@ -72,6 +84,7 @@
             font-size: 1.5rem;
             font-weight: 900;
             letter-spacing: -0.02em;
+            z-index: 1001;
         }
 
         .nav-links {
@@ -108,6 +121,34 @@
 
         .nav-links a:hover::after {
             width: 100%;
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            z-index: 1001;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 2px;
+            background: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
         }
 
         /* Header */
@@ -481,24 +522,67 @@
         @media (max-width: 768px) {
             nav {
                 padding: 1.5rem 2rem;
+                background: rgba(10,10,10,0.98);
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+
+            .hamburger {
+                display: flex;
             }
 
             .nav-links {
-                gap: 1.5rem;
-                font-size: 0.85rem;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background: rgba(10,10,10,0.98);
+                flex-direction: column;
+                padding: 6rem 2rem 2rem;
+                gap: 2rem;
+                transition: right 0.3s ease;
+                backdrop-filter: blur(10px);
+                border-left: 1px solid #1a1a1a;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.1rem;
+                padding: 0.5rem 0;
             }
 
             .page-header {
                 padding: 10rem 2rem 3rem;
             }
 
+            .page-title {
+                font-size: clamp(3rem, 15vw, 5rem);
+            }
+
+            .page-subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 0.1em;
+            }
+
             .albums-container {
                 padding: 0 2rem 4rem;
+            }
+
+            .album {
+                margin-bottom: 1.5rem;
             }
 
             .album-header {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
+                padding: 1.5rem;
             }
 
             .album-cover {
@@ -506,17 +590,47 @@
                 height: 250px;
             }
 
+            .album-title {
+                font-size: 2rem;
+            }
+
+            .album-meta {
+                font-size: 0.85rem;
+            }
+
+            .album-description {
+                font-size: 0.95rem;
+                max-width: 100%;
+            }
+
             .album-toggle {
                 grid-column: 1;
                 margin-top: 0;
             }
 
-            .album-grid {
-                grid-template-columns: 1fr;
+            .album.expanded .album-content {
+                padding: 1.5rem;
+                padding-top: 0;
             }
 
-            #cursor {
-                display: none;
+            .album-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            /* Mobile touch improvements */
+            .album-photo::after {
+                opacity: 0;
+            }
+
+            .photo-caption {
+                transform: translateY(0);
+                background: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.9) 40%);
+                padding: 3rem 1.5rem 1.5rem;
+            }
+
+            .caption-title {
+                font-size: 1rem;
             }
 
             .lightbox-nav {
@@ -540,6 +654,41 @@
                 height: 40px;
                 font-size: 1.5rem;
             }
+
+            .lightbox-content {
+                max-width: 95%;
+            }
+
+            footer {
+                padding: 3rem 2rem;
+            }
+        }
+
+        /* Tablet adjustments */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            nav {
+                padding: 1.5rem 3rem;
+            }
+
+            .nav-links {
+                gap: 2rem;
+            }
+
+            .nav-links a {
+                font-size: 0.9rem;
+            }
+
+            .page-header {
+                padding: 10rem 3rem 3rem;
+            }
+
+            .albums-container {
+                padding: 0 3rem 6rem;
+            }
+
+            .album-title {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -548,6 +697,11 @@
 
     <nav>
         <div class="logo">WILLIAM CAIN</div>
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
         <ul class="nav-links">
             <li><a href="index.html">Home</a></li>
             <li><a href="Allphotos.html">Gallery</a></li>
@@ -563,11 +717,11 @@
 
     <section id="albums" class="albums-container">
         
-        <!-- Album 1: Iceland Adventure -->
+        <!-- Album 1: Photography Field Trip -->
         <div class="album">
             <div class="album-header">
                 <div class="album-cover">
-                    <img src="https://i.postimg.cc/QM3LZDp5/IMG-3037.jpg" alt="Iceland Album">
+                    <img src="https://i.postimg.cc/QM3LZDp5/IMG-3037.jpg" alt="Field Trip Album">
                 </div>
                 <div class="album-info">
                     <h2 class="album-title">Photography Field Trip</h2>
@@ -582,91 +736,91 @@
             <div class="album-content">
                 <div class="album-grid">
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/qMvbVYPj/IMG-3053.jpg" alt="Mountain Vista">
+                        <img src="https://i.postimg.cc/qMvbVYPj/IMG-3053.jpg" alt="Carter Solak">
                         <div class="photo-caption">
                             <div class="caption-title">Carter Solak</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/sDTLMyPC/IMG-3098.jpg" alt="Northern Lights">
+                        <img src="https://i.postimg.cc/sDTLMyPC/IMG-3098.jpg" alt="Troll 4">
                         <div class="photo-caption">
                             <div class="caption-title">Troll #4</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/28kJj3Wz/IMG-3103.jpg" alt="Waterfall">
+                        <img src="https://i.postimg.cc/28kJj3Wz/IMG-3103.jpg" alt="Troll 3">
                         <div class="photo-caption">
                             <div class="caption-title">Troll #3</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/3rPKRsh1/IMG-3166.jpg" alt="Glacier">
+                        <img src="https://i.postimg.cc/3rPKRsh1/IMG-3166.jpg" alt="Old Silo">
                         <div class="photo-caption">
                             <div class="caption-title">Old Silo</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/QM3LZDp5/IMG-3037.jpg" alt="Black Beach">
+                        <img src="https://i.postimg.cc/QM3LZDp5/IMG-3037.jpg" alt="Troll 1">
                         <div class="photo-caption">
                             <div class="caption-title">Troll #1</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/fbN4Qsx9/IMG-3044.jpg" alt="Mountain Road">
+                        <img src="https://i.postimg.cc/fbN4Qsx9/IMG-3044.jpg" alt="Troll Eye">
                         <div class="photo-caption">
                             <div class="caption-title">Troll #1 Eye</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/0Nsg1vpJ/IMG-3052.jpg" alt="Valley">
+                        <img src="https://i.postimg.cc/0Nsg1vpJ/IMG-3052.jpg" alt="Tail">
                         <div class="photo-caption">
                             <div class="caption-title">Troll's Tail</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/xCfWqPx6/IMG-3058.jpg" alt="Moss">
+                        <img src="https://i.postimg.cc/xCfWqPx6/IMG-3058.jpg" alt="Troll 2">
                         <div class="photo-caption">
                             <div class="caption-title">Troll #2</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/sXjt1JHd/IMG-3067.jpg" alt="Lava">
+                        <img src="https://i.postimg.cc/sXjt1JHd/IMG-3067.jpg" alt="Clara">
                         <div class="photo-caption">
                             <div class="caption-title">Clara Nowoc</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/FRr21xWw/IMG-3075.jpg" alt="Lagoon">
+                        <img src="https://i.postimg.cc/FRr21xWw/IMG-3075.jpg" alt="Raleigh">
                         <div class="photo-caption">
                             <div class="caption-title">Raleigh NC</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/WpfQbgMW/IMG-3139.jpg" alt="Sunset">
+                        <img src="https://i.postimg.cc/WpfQbgMW/IMG-3139.jpg" alt="Bridge">
                         <div class="photo-caption">
                             <div class="caption-title">Locked Bridge</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/bYFKNkxp/IMG-3193.jpg" alt="Horizon">
+                        <img src="https://i.postimg.cc/bYFKNkxp/IMG-3193.jpg" alt="Recycling">
                         <div class="photo-caption">
                             <div class="caption-title">Old Recycling Facility</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/3J4zyN1R/IMG-3239.jpg" alt="Sunset">
+                        <img src="https://i.postimg.cc/3J4zyN1R/IMG-3239.jpg" alt="Bathrooms">
                         <div class="photo-caption">
                             <div class="caption-title">Bathrooms</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/WpfQbgMW/IMG-3139.jpg" alt="Sunset">
+                        <img src="https://i.postimg.cc/WpfQbgMW/IMG-3139.jpg" alt="Landscape">
                         <div class="photo-caption">
-                            <div class="caption-title">NC landscape</div>
+                            <div class="caption-title">NC Landscape</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/L8fdW5Zp/IMG-3322.jpg" alt="Sunset">
+                        <img src="https://i.postimg.cc/L8fdW5Zp/IMG-3322.jpg" alt="Troll 5">
                         <div class="photo-caption">
                             <div class="caption-title">Troll #5</div>
                         </div>
@@ -675,11 +829,11 @@
             </div>
         </div>
 
-        <!-- Album 2: Tokyo Nights -->
+        <!-- Album 2: Black And White Photos -->
         <div class="album">
             <div class="album-header">
                 <div class="album-cover">
-                    <img src="https://i.postimg.cc/RCLVhPP4/LRM-20250814-161150.jpg" alt="Tokyo Album">
+                    <img src="https://i.postimg.cc/RCLVhPP4/LRM-20250814-161150.jpg" alt="B&W Album">
                 </div>
                 <div class="album-info">
                     <h2 class="album-title">Black And White Photos</h2>
@@ -694,373 +848,27 @@
             <div class="album-content">
                 <div class="album-grid">
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/RCLVhPP4/LRM-20250814-161150.jpg" alt="Shibuya Crossing">
+                        <img src="https://i.postimg.cc/RCLVhPP4/LRM-20250814-161150.jpg" alt="Rosary">
                         <div class="photo-caption">
                             <div class="caption-title">Roasry</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/rFyyrSbZ/LRM-20250815-111905.jpg" alt="Neon Signs">
+                        <img src="https://i.postimg.cc/rFyyrSbZ/LRM-20250815-111905.jpg" alt="Camera">
                         <div class="photo-caption">
                             <div class="caption-title">Oldie Camera</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/6566vdSg/LRM-20250820-150221.jpg" alt="Alley">
+                        <img src="https://i.postimg.cc/6566vdSg/LRM-20250820-150221.jpg" alt="Mirror">
                         <div class="photo-caption">
                             <div class="caption-title">Rear View Mirror</div>
                         </div>
                     </div>
                     <div class="album-photo">
-                        <img src="https://i.postimg.cc/L6441z70/LRM-20250820-152057.jpg" alt="Train Station">
+                        <img src="https://i.postimg.cc/L6441z70/LRM-20250820-152057.jpg" alt="Dreams">
                         <div class="photo-caption">
                             <div class="caption-title">American Dreams</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Album 3: Patagonia Wilderness -->
-        <div class="album">
-            <div class="album-header">
-                <div class="album-cover">
-                    <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&fit=crop" alt="Patagonia Album">
-                </div>
-                <div class="album-info">
-                    <h2 class="album-title">Patagonia Wilderness</h2>
-                    <div class="album-meta">10 Photos · November 2023</div>
-                    <p class="album-description">Exploring the untamed beauty of Patagonia. Dramatic mountain peaks, pristine forests, and the feeling of being at the edge of the world.</p>
-                </div>
-                <div class="album-toggle">
-                    <div class="toggle-icon">↓</div>
-                    <span>View</span>
-                </div>
-            </div>
-            <div class="album-content">
-                <div class="album-grid">
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&fit=crop" alt="Mountain">
-                        <div class="photo-caption">
-                            <div class="caption-title">Torres del Paine</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&fit=crop" alt="Forest">
-                        <div class="photo-caption">
-                            <div class="caption-title">Forest Path</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&fit=crop" alt="Lake">
-                        <div class="photo-caption">
-                            <div class="caption-title">Mirror Lake</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600&fit=crop" alt="Glacier">
-                        <div class="photo-caption">
-                            <div class="caption-title">Blue Glacier</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&fit=crop" alt="Summit">
-                        <div class="photo-caption">
-                            <div class="caption-title">Summit View</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&fit=crop" alt="Trail">
-                        <div class="photo-caption">
-                            <div class="caption-title">Mountain Trail</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&fit=crop" alt="Wildlife">
-                        <div class="photo-caption">
-                            <div class="caption-title">Wild Guanaco</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&fit=crop" alt="Sunset">
-                        <div class="photo-caption">
-                            <div class="caption-title">Golden Hour</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=600&fit=crop" alt="River">
-                        <div class="photo-caption">
-                            <div class="caption-title">River Valley</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&fit=crop" alt="Camp">
-                        <div class="photo-caption">
-                            <div class="caption-title">Base Camp</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Album 4: Urban Portraits -->
-        <div class="album">
-            <div class="album-header">
-                <div class="album-cover">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&fit=crop" alt="Portraits Album">
-                </div>
-                <div class="album-info">
-                    <h2 class="album-title">Urban Portraits</h2>
-                    <div class="album-meta">8 Photos · August 2024</div>
-                    <p class="album-description">Character studies shot on location in cities around the world. Each portrait tells a unique story of individuality in urban environments.</p>
-                </div>
-                <div class="album-toggle">
-                    <div class="toggle-icon">↓</div>
-                    <span>View</span>
-                </div>
-            </div>
-            <div class="album-content">
-                <div class="album-grid">
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&fit=crop" alt="Portrait 1">
-                        <div class="photo-caption">
-                            <div class="caption-title">Brooklyn Streets</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&fit=crop" alt="Portrait 2">
-                        <div class="photo-caption">
-                            <div class="caption-title">LA Light</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&fit=crop" alt="Portrait 3">
-                        <div class="photo-caption">
-                            <div class="caption-title">Natural Beauty</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&fit=crop" alt="Portrait 4">
-                        <div class="photo-caption">
-                            <div class="caption-title">Golden Hour</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&fit=crop" alt="Portrait 5">
-                        <div class="photo-caption">
-                            <div class="caption-title">City Soul</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&fit=crop" alt="Portrait 6">
-                        <div class="photo-caption">
-                            <div class="caption-title">Contemplation</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&fit=crop" alt="Portrait 7">
-                        <div class="photo-caption">
-                            <div class="caption-title">Window Light</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=600&fit=crop" alt="Portrait 8">
-                        <div class="photo-caption">
-                            <div class="caption-title">Studio Session</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Album 5: Coastal California -->
-        <div class="album">
-            <div class="album-header">
-                <div class="album-cover">
-                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&fit=crop" alt="California Album">
-                </div>
-                <div class="album-info">
-                    <h2 class="album-title">Coastal California</h2>
-                    <div class="album-meta">14 Photos · May 2024</div>
-                    <p class="album-description">Highway 1 road trip from San Francisco to Big Sur. Dramatic cliffs, endless ocean views, and the golden light of the California coast.</p>
-                </div>
-                <div class="album-toggle">
-                    <div class="toggle-icon">↓</div>
-                    <span>View</span>
-                </div>
-            </div>
-            <div class="album-content">
-                <div class="album-grid">
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&fit=crop" alt="Big Sur">
-                        <div class="photo-caption">
-                            <div class="caption-title">Big Sur Cliffs</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&fit=crop" alt="Beach">
-                        <div class="photo-caption">
-                            <div class="caption-title">Peaceful Beach</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=600&fit=crop" alt="Sunset">
-                        <div class="photo-caption">
-                            <div class="caption-title">Pacific Sunset</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&fit=crop" alt="Highway">
-                        <div class="photo-caption">
-                            <div class="caption-title">Highway 1</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&fit=crop" alt="Waves">
-                        <div class="photo-caption">
-                            <div class="caption-title">Crashing Waves</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&fit=crop" alt="Coast">
-                        <div class="photo-caption">
-                            <div class="caption-title">Coastal Vista</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=600&fit=crop" alt="Lighthouse">
-                        <div class="photo-caption">
-                            <div class="caption-title">Point Sur</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&fit=crop" alt="Bridge">
-                        <div class="photo-caption">
-                            <div class="caption-title">Bixby Bridge</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&fit=crop" alt="Rocks">
-                        <div class="photo-caption">
-                            <div class="caption-title">Rocky Shore</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&fit=crop" alt="Pier">
-                        <div class="photo-caption">
-                            <div class="caption-title">Santa Cruz Pier</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=600&fit=crop" alt="Dawn">
-                        <div class="photo-caption">
-                            <div class="caption-title">Morning Light</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&fit=crop" alt="Fog">
-                        <div class="photo-caption">
-                            <div class="caption-title">Foggy Coast</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&fit=crop" alt="Tide">
-                        <div class="photo-caption">
-                            <div class="caption-title">Low Tide</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&fit=crop" alt="Horizon">
-                        <div class="photo-caption">
-                            <div class="caption-title">Endless Ocean</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Album 6: Architecture Studies -->
-        <div class="album">
-            <div class="album-header">
-                <div class="album-cover">
-                    <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=600&fit=crop" alt="Architecture Album">
-                </div>
-                <div class="album-info">
-                    <h2 class="album-title">Architecture Studies</h2>
-                    <div class="album-meta">11 Photos · September 2024</div>
-                    <p class="album-description">A collection exploring modern and classical architecture through light, form, and geometric composition. From Dubai's futuristic skyline to Rome's ancient structures.</p>
-                </div>
-                <div class="album-toggle">
-                    <div class="toggle-icon">↓</div>
-                    <span>View</span>
-                </div>
-            </div>
-            <div class="album-content">
-                <div class="album-grid">
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=600&fit=crop" alt="Modern Building">
-                        <div class="photo-caption">
-                            <div class="caption-title">Dubai Towers</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1486718448742-163732cd1544?w=600&fit=crop" alt="Brutalist">
-                        <div class="photo-caption">
-                            <div class="caption-title">Brutalist Beauty</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=600&fit=crop" alt="Skyscraper">
-                        <div class="photo-caption">
-                            <div class="caption-title">Vertical Lines</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&fit=crop" alt="Cathedral">
-                        <div class="photo-caption">
-                            <div class="caption-title">Sacred Space</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=600&fit=crop" alt="Glass">
-                        <div class="photo-caption">
-                            <div class="caption-title">Glass & Steel</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1486718448742-163732cd1544?w=600&fit=crop" alt="Concrete">
-                        <div class="photo-caption">
-                            <div class="caption-title">Raw Concrete</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=600&fit=crop" alt="Pattern">
-                        <div class="photo-caption">
-                            <div class="caption-title">Geometric Pattern</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=600&fit=crop" alt="Interior">
-                        <div class="photo-caption">
-                            <div class="caption-title">Interior Light</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=600&fit=crop" alt="Reflection">
-                        <div class="photo-caption">
-                            <div class="caption-title">Mirror City</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1486718448742-163732cd1544?w=600&fit=crop" alt="Symmetry">
-                        <div class="photo-caption">
-                            <div class="caption-title">Perfect Symmetry</div>
-                        </div>
-                    </div>
-                    <div class="album-photo">
-                        <img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=600&fit=crop" alt="Facade">
-                        <div class="photo-caption">
-                            <div class="caption-title">Modern Facade</div>
                         </div>
                     </div>
                 </div>
@@ -1084,37 +892,65 @@
     </footer>
 
     <script>
-        // Custom cursor
+        // Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const navLinksItems = document.querySelectorAll('.nav-links a');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        navLinksItems.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+
+        // Custom cursor - desktop only
         const cursor = document.getElementById('cursor');
-        let mouseX = 0, mouseY = 0;
-        let cursorX = 0, cursorY = 0;
+        if (window.innerWidth > 768) {
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
 
-        function animateCursor() {
-            cursorX += (mouseX - cursorX) * 0.15;
-            cursorY += (mouseY - cursorY) * 0.15;
-            
-            cursor.style.left = cursorX + 'px';
-            cursor.style.top = cursorY + 'px';
-            
-            requestAnimationFrame(animateCursor);
+            function animateCursor() {
+                cursorX += (mouseX - cursorX) * 0.15;
+                cursorY += (mouseY - cursorY) * 0.15;
+                
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            // Hover effects
+            const interactiveElements = document.querySelectorAll('a, button, .album-header, .album-photo img');
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.classList.add('hover');
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('hover');
+                });
+            });
         }
-        animateCursor();
-
-        // Hover effects
-        const interactiveElements = document.querySelectorAll('a, button, .album-header, .album-photo img');
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.classList.add('hover');
-            });
-            el.addEventListener('mouseleave', () => {
-                cursor.classList.remove('hover');
-            });
-        });
 
         // Album expansion functionality
         const albums = document.querySelectorAll('.album');
@@ -1123,15 +959,7 @@
             const header = album.querySelector('.album-header');
             
             header.addEventListener('click', () => {
-                // Toggle the expanded class
                 album.classList.toggle('expanded');
-                
-                // Optional: Close other albums when one is opened
-                // albums.forEach(otherAlbum => {
-                //     if (otherAlbum !== album) {
-                //         otherAlbum.classList.remove('expanded');
-                //     }
-                // });
             });
         });
 
@@ -1174,7 +1002,7 @@
             
             photos.forEach((photo, index) => {
                 photo.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent album from toggling
+                    e.stopPropagation();
                     openLightbox(photosArray, index);
                 });
             });
